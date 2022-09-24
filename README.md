@@ -1,2 +1,5 @@
 # mini-blog-backend
-This is the node based backend of a mini blog project. The project is built on top of express framework.
+呼市敬业学校招聘平台后端
+node + express + mongodb
+验证方式采用 JWT
+之后有将数据库迁移至 postgresql的计划
