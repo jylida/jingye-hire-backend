@@ -1,12 +1,22 @@
 const HireNews = require("../model/HireNews");
 const getAllHireNews = async (req, res) => {
-  const employees = await HireNews.find();
-  if (!employees) {
+  let page = 1;
+  if (req.query.page) {
+    page = parseInt(req.query.page);
+  }
+  let limit = 10;
+  if (req.query.limit) {
+    limit = req.query.limit;
+  }
+
+  console.log(page, limit);
+  const hireNews = await HireNews.find();
+  if (!hireNews) {
     return res.status(204).json({
       message: "No hire news found",
     });
   }
-  res.json({ hireNews });
+  res.json(hireNews);
 };
 
 const createNewHireNews = async (req, res) => {
