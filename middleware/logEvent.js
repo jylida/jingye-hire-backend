@@ -26,6 +26,7 @@ const logEvent = async (
 };
 
 const logger = (req, res, next) => {
+  console.log(req.method, req.url);
   const logItem = `${req.method}\t${req.url}`;
   logEvent(logItem, "eventLog.txt");
   next();
