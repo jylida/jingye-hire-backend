@@ -6,8 +6,10 @@ const getAllHireNews = async (req, res) => {
   }
   let limit = 10;
   if (req.query.limit) {
-    limit = req.query.limit;
+    limit = parseInt(req.query.limit);
   }
+  const indexStart = (page - 1) * limit;
+  const indexEnd = (page) * limit;
 
   console.log(page, limit);
   const hireNews = await HireNews.find();
@@ -16,7 +18,8 @@ const getAllHireNews = async (req, res) => {
       message: "No hire news found",
     });
   }
-  res.json(hireNews);
+  const totalPages = Math.ceil(hireNews.length/limit);
+  res.json({totalPages, news: hireNews.slice(indexStart, indexEnd)});
 };
 
 const createNewHireNews = async (req, res) => {
