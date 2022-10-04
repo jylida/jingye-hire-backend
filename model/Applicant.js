@@ -1,63 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const eduBg = new Schema({
-  from: {
-    type: String,
-    required: true,
-  },
-  to: {
-    type: String,
-    required: true,
-  },
-  school: {
-    type: String,
-    required: true,
-  },
-  degree: {
-    type: String,
-    required: true,
-  },
-  majorType: {
-    type: String,
-    required: true,
-  },
-  majorName: {
-    type: String,
-    required: true,
-  },
-  isGraduated: {
-    type: Boolean,
-    required: true,
-  },
-});
-const workBg = new Schema({
-  from: {
-    type: String,
-    required: true,
-  },
-  to: {
-    type: String,
-    required: true,
-  },
-  place: {
-    type: String,
-    required: true,
-  },
-  title: {
-    type: String,
-    required: true,
-  },
-  specific: {
-    type: String,
-    required: true,
-  },
-  reasonOnLeave: {
-    type: String,
-    required: false,
-  },
-});
-
 const applicantSchema = new Schema({
   name: {
     type: String,
@@ -72,6 +15,10 @@ const applicantSchema = new Schema({
     required: true,
   },
   IDCard: {
+    type: String,
+    required: true,
+  },
+  ethics: {
     type: String,
     required: true,
   },
@@ -103,8 +50,27 @@ const applicantSchema = new Schema({
     type: String,
     required: true,
   },
-  EducationBackground: [eduBg],
-  workingExperience: [workBg],
+  education: [
+    {
+      from: String,
+      to: String,
+      school: String,
+      degree: String,
+      majorType: String,
+      majorName: String,
+      isGraduated: Boolean,
+    },
+  ],
+  work: [
+    {
+      from: String,
+      to: String,
+      place: String,
+      title: String,
+      specific: String,
+      reasonOnLeave: String,
+    },
+  ],
 });
 
 module.exports = mongoose.model("Applicant", applicantSchema);

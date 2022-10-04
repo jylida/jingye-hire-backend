@@ -16,16 +16,39 @@ const handleApply = async (req, res) => {
       message: `User ${basic.username} has already lodged a application!`,
     });
   }
-  const newApplication = { ...basic, ...education, ...work };
+  const newApplication = { ...basic, education, work };
   try {
     const result = await Applicant.create(newApplication);
     console.log(result);
     res.status(201).json({
       success: `User ${newApplication.username} successfully lodge a new application`,
+      id: result._id,
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-module.exports = { handleApply };
+const getAllApplication = async (req, res) => {
+  const applications = await Applicant.find();
+  if (!applications) {
+    return res.status(204).json({ message: "no applicant found!" });
+  }
+  res.status(201).json({ applications });
+};
+
+const getOneApplication = async (req, res) => {
+  if (!req?.params?.id) {
+    return res.status(204).json({
+      message: "Parameter ID required!",
+    });
+  }
+  console.log(req.params.id);
+  const application = await Applicant.findOne({ username: req.params.id });
+  if (!application) {
+    return res.status(204).json({ message: "no applicant found!" });
+  }
+  res.status(201).json({ application });
+};
+
+module.exports = { handleApply, getAllApplication, getOneApplication };
