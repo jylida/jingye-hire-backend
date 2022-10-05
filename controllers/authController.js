@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const Users = require("../model/Users");
+const Applicant = require("../model/Applicant");
 
 const handleAuth = async (req, res) => {
   const { user, pwd } = req.body;
@@ -16,6 +17,7 @@ const handleAuth = async (req, res) => {
   const match = await bcrypt.compare(pwd, foundUser.password);
   if (match) {
     const roles = Object.values(foundUser.roles).filter(Boolean);
+    const application = await Applicant.findOne({ username: user });
     const accessToken = jwt.sign(
       {
         UserInfo: {
@@ -43,7 +45,11 @@ const handleAuth = async (req, res) => {
       // secure: true,
       maxAge: 1 * 24 * 60 * 60 * 1000,
     });
-    res.json({ accessToken, roles });
+    res.json({
+      accessToken,
+      roles,
+      progress: application ? application.progress : [],
+    });
   } else {
     res.sendStatus(401);
   }

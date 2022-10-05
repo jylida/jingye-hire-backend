@@ -2,6 +2,7 @@ const User = require("../model/Users");
 
 const handleLogout = async (req, res) => {
   const refreshToken = req.cookies.jwt;
+  console.log("refresh Token: ", refreshToken);
   if (!refreshToken) {
     return res.sendStatus(204);
   }

@@ -50,6 +50,26 @@ const applicantSchema = new Schema({
     type: String,
     required: true,
   },
+  isLecturer: {
+    type: Boolean,
+    required: true,
+  },
+  subject: {
+    type: String,
+    required: false,
+  },
+  tqc: {
+    type: String,
+    required: false,
+  },
+  department: {
+    type: String,
+    required: true,
+  },
+  jobSpecific: {
+    type: String,
+    required: true,
+  },
   education: [
     {
       from: String,
@@ -71,6 +91,7 @@ const applicantSchema = new Schema({
       reasonOnLeave: String,
     },
   ],
+  progress: [{ lodgeDate: Date, applicationStatus: String }],
 });
 
 module.exports = mongoose.model("Applicant", applicantSchema);

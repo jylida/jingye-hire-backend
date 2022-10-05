@@ -16,7 +16,12 @@ const handleApply = async (req, res) => {
       message: `User ${basic.username} has already lodged a application!`,
     });
   }
-  const newApplication = { ...basic, education, work };
+  const newApplication = {
+    ...basic,
+    education,
+    work,
+    progress: [{ lodgeDate: new Date(), applicationStatus: "提交申请" }],
+  };
   try {
     const result = await Applicant.create(newApplication);
     console.log(result);
