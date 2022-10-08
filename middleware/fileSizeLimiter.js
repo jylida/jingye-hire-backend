@@ -1,4 +1,4 @@
-const MB = 5;
+const MB = 1;
 const FILE_SIZE_LIMIT = MB * 1024 * 1024;
 
 const fileSizeLimiter = (req, res, next) => {

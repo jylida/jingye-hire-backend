@@ -3,9 +3,11 @@ const path = require("path");
 const fileExtLimiter = (allowedExtArray) => {
   return (req, res, next) => {
     const files = req.files;
-    const fileExtensions = Object.keys(files).map((key) =>
-      path.extname(files[key].name)
-    );
+    const fileExtensions = Object.keys(files).map((key) => {
+      console.log("key: ", key);
+      console.log("name: ", files[key].name);
+      return path.extname(files[key].name);
+    });
     console.log(fileExtensions);
     const allowed = fileExtensions.every((ext) =>
       allowedExtArray.includes(ext)

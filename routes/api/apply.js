@@ -10,7 +10,8 @@ router
     verifyRoles(ROLES_LIST.Editor, ROLES_LIST.Admin),
     applyController.getAllApplication
   )
-  .post(verifyRoles(ROLES_LIST.User), applyController.handleApply);
+  .post(verifyRoles(ROLES_LIST.User), applyController.handleApply)
+  .delete(verifyRoles(ROLES_LIST.User), applyController.deleteOneApplication);
 
 router
   .route("/:id")

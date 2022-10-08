@@ -56,4 +56,27 @@ const getOneApplication = async (req, res) => {
   res.status(201).json({ application });
 };
 
-module.exports = { handleApply, getAllApplication, getOneApplication };
+const deleteOneApplication = async (req, res) => {
+  console.log("req body: ", req.body);
+  if (!req?.body?.id) {
+    return res.status(204).json({
+      message: "Parameter ID required!",
+    });
+  }
+  const application = await Applicant.findOne({ username: req.body.id }).exec();
+  console.log("application: ", application);
+  if (!application) {
+    return res
+      .status(400)
+      .json({ message: `News ID ${req.body.id} not found!` });
+  }
+  const result = await application.deleteOne();
+  res.json(result);
+};
+
+module.exports = {
+  handleApply,
+  getAllApplication,
+  getOneApplication,
+  deleteOneApplication,
+};
