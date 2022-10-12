@@ -7,7 +7,7 @@ const { format } = require("date-fns");
 const logEvent = async (
   message,
   fileName,
-  folderName = path.join(__dirname, "..", "logs")
+  folderName = path.join(__dirname, "..", "eventLogs")
 ) => {
   const dateTime = format(new Date(), "yyyyMMdd\tHH:mm:ss");
   const logItem = `${dateTime}\t${uuid()}\t${message}\n`;

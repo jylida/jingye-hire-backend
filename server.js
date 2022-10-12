@@ -38,6 +38,7 @@ app.use("/hirenews", require("./routes/api/hireNews"));
 app.use(verifyJWT);
 app.use("/apply", require("./routes/api/apply"));
 app.use("/upload", require("./routes/api/upload"));
+app.use("/download", require("./routes/api/download"));
 
 app.all("*", (req, res) => {
   res.status(404);

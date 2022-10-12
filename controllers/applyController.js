@@ -1,3 +1,4 @@
+const path = require("path");
 const Applicant = require("../model/Applicant");
 
 const handleApply = async (req, res) => {
@@ -35,11 +36,27 @@ const handleApply = async (req, res) => {
 };
 
 const getAllApplication = async (req, res) => {
+  let page = 1;
+  if (req.query.page) {
+    page = parseInt(req.query.page);
+  }
+  let limit = 10;
+  if (req.query.limit) {
+    limit = parseInt(req.query.limit);
+  }
+  const indexStart = (page - 1) * limit;
+  const indexEnd = page * limit;
   const applications = await Applicant.find();
+  console.log(`start: ${indexStart}, end: ${indexEnd}`);
+  console.log(applications.slice(indexStart, indexEnd));
   if (!applications) {
     return res.status(204).json({ message: "no applicant found!" });
   }
-  res.status(201).json({ applications });
+  const totalPages = Math.ceil(applications.length / limit);
+  res.status(201).json({
+    totalPages,
+    applications: applications.slice(indexStart, indexEnd),
+  });
 };
 
 const getOneApplication = async (req, res) => {
@@ -48,7 +65,6 @@ const getOneApplication = async (req, res) => {
       message: "Parameter ID required!",
     });
   }
-  console.log(req.params.id);
   const application = await Applicant.findOne({ username: req.params.id });
   if (!application) {
     return res.status(204).json({ message: "no applicant found!" });

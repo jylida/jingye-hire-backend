@@ -36,8 +36,7 @@ const handleAuth = async (req, res) => {
       { expiresIn: "1d" }
     );
     foundUser.refreshToken = refreshToken;
-    const result = await foundUser.save();
-    console.log(result);
+    await foundUser.save();
 
     res.cookie("jwt", refreshToken, {
       httpOnly: true,
