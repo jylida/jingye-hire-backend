@@ -91,6 +91,10 @@ const applicantSchema = new Schema({
       reasonOnLeave: String,
     },
   ],
+  uploadFile: {
+    type: Boolean,
+    required: false,
+  },
   progress: [{ lodgeDate: Date, applicationStatus: String }],
 });
 

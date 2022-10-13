@@ -1,12 +1,11 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-
-const applyFileSchema = new Schema({
+const fileNameSchema = new Schema({
   username: {
     type: String,
     required: true,
   },
-  filePath: [String],
+  path: [String],
 });
 
-module.exports = mongoose.model("ApplyFiles", applyFileSchema);
+module.exports = mongoose.model("FileName", fileNameSchema);

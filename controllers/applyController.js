@@ -1,4 +1,3 @@
-const path = require("path");
 const Applicant = require("../model/Applicant");
 
 const handleApply = async (req, res) => {
@@ -21,11 +20,10 @@ const handleApply = async (req, res) => {
     ...basic,
     education,
     work,
-    progress: [{ lodgeDate: new Date(), applicationStatus: "提交申请" }],
+    progress: [{ lodgeDate: new Date(), applicationStatus: "申请已接受" }],
   };
   try {
     const result = await Applicant.create(newApplication);
-    console.log(result);
     res.status(201).json({
       success: `User ${newApplication.username} successfully lodge a new application`,
       id: result._id,
@@ -47,8 +45,6 @@ const getAllApplication = async (req, res) => {
   const indexStart = (page - 1) * limit;
   const indexEnd = page * limit;
   const applications = await Applicant.find();
-  console.log(`start: ${indexStart}, end: ${indexEnd}`);
-  console.log(applications.slice(indexStart, indexEnd));
   if (!applications) {
     return res.status(204).json({ message: "no applicant found!" });
   }
@@ -67,20 +63,39 @@ const getOneApplication = async (req, res) => {
   }
   const application = await Applicant.findOne({ username: req.params.id });
   if (!application) {
-    return res.status(204).json({ message: "no applicant found!" });
+    return res.status(404).json({ message: "no applicant found!" });
   }
   res.status(201).json({ application });
 };
+const updateOneApplicationStatus = async (req, res) => {
+  if (!req?.params?.id) {
+    return res.status(204).json({
+      message: "Parameter ID required!",
+    });
+  }
+  try {
+    const application = await Applicant.findOne({ username: req.params.id });
+    if (!application) {
+      return res.status(404).json({ message: "no applicant found!" });
+    }
+    application.progress.push({
+      lodgeDate: new Date(),
+      applicationStatus: req.body.status,
+    });
+    await application.save();
+  } catch (err) {
+    return res.status(500).json({ status: "failure", message: err.message });
+  }
+  res.status(200).json({ status: "success", message: "process updated!" });
+};
 
 const deleteOneApplication = async (req, res) => {
-  console.log("req body: ", req.body);
   if (!req?.body?.id) {
     return res.status(204).json({
       message: "Parameter ID required!",
     });
   }
   const application = await Applicant.findOne({ username: req.body.id }).exec();
-  console.log("application: ", application);
   if (!application) {
     return res
       .status(400)
@@ -94,5 +109,6 @@ module.exports = {
   handleApply,
   getAllApplication,
   getOneApplication,
+  updateOneApplicationStatus,
   deleteOneApplication,
 };

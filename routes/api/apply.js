@@ -15,6 +15,10 @@ router
 
 router
   .route("/:id")
-  .get(verifyRoles(ROLES_LIST.User), applyController.getOneApplication);
+  .get(verifyRoles(ROLES_LIST.User), applyController.getOneApplication)
+  .put(
+    verifyRoles(ROLES_LIST.Editor, ROLES_LIST.Admin),
+    applyController.updateOneApplicationStatus
+  );
 
 module.exports = router;

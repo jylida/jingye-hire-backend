@@ -1,14 +1,17 @@
+const Applicant = require("../model/Applicant");
 const path = require("path");
 const AdmZip = require("adm-zip");
 const fs = require("fs");
 
 const getUsername = (filePath) => {
+  console.log(filePath);
   const indexOFSlash = filePath.indexOf("_");
   return filePath.slice(0, indexOFSlash);
 };
 
 const uploadController = async (req, res) => {
   const files = req.files;
+  const username = req.params.id;
   const filePathArray = [];
   Object.keys(files).forEach((key) => {
     const filePath = path.join(
@@ -25,6 +28,13 @@ const uploadController = async (req, res) => {
       }
     });
   });
+  try {
+    const application = await Applicant.findOne({ username: username });
+    application.uploadFile = filePathArray.length > 0;
+    await application.save();
+  } catch (err) {
+    return res.status(404).json({ status: "failure", message: err.message });
+  }
   res.status(200).json({ status: "success", message: "logged" });
 };
 
