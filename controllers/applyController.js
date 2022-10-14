@@ -42,9 +42,22 @@ const getAllApplication = async (req, res) => {
   if (req.query.limit) {
     limit = parseInt(req.query.limit);
   }
+  const findOptions = {};
+  if (req.query.isLecturer) {
+    findOptions.isLecturer = req.query.isLecturer === "true";
+  }
+  if (req.query.handled) {
+    findOptions.handled = req.query.handled === "true";
+  }
+  if (req.query.subject) {
+    findOptions.subject = req.query.subject;
+  }
+  if (req.query.department) {
+    findOptions.department = req.query.department;
+  }
   const indexStart = (page - 1) * limit;
   const indexEnd = page * limit;
-  const applications = await Applicant.find();
+  const applications = await Applicant.find(findOptions).exec();
   if (!applications) {
     return res.status(204).json({ message: "no applicant found!" });
   }

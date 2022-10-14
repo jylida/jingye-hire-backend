@@ -94,8 +94,24 @@ const applicantSchema = new Schema({
   uploadFile: {
     type: Boolean,
     required: false,
+    default: false,
   },
   progress: [{ lodgeDate: Date, applicationStatus: String }],
+  handled: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+});
+applicantSchema.pre("save", function (next) {
+  if (
+    ["接受", "拒绝"].includes(
+      this.progress[this.progress.length - 1].applicationStatus
+    )
+  ) {
+    this.handled = true;
+  }
+  next();
 });
 
 module.exports = mongoose.model("Applicant", applicantSchema);
