@@ -62,7 +62,13 @@ const getAllApplication = async (req, res) => {
     return res.status(204).json({ message: "no applicant found!" });
   }
   const totalPages = Math.ceil(applications.length / limit);
+  const totalApplications = applications.length;
+  const totalHandledApplications = applications.filter(
+    (app) => app.handled
+  ).length;
   res.status(201).json({
+    totalApplications,
+    totalHandledApplications,
     totalPages,
     applications: applications.slice(indexStart, indexEnd),
   });
