@@ -37,10 +37,21 @@ const handleAuth = async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    const newRTArray = !cookies?.jwt
-      ? (foundUser.refreshToken = foundUser.refreshToken)
+    let newRTArray = !cookies?.jwt
+      ? foundUser.refreshToken
       : foundUser.refreshToken.filter((rt) => rt !== cookies.jwt);
     if (cookies?.jwt) {
+      //Scenario added here:
+      //  User login in but never use RT and does not logout
+      //  RT is stolen
+      //  If 1 & 2, reuse detection is needed to clear all RTs when user login
+      const refreshToken = cookies.jwt;
+      const foundToken = await Users.findOne({ refreshToken }).exec();
+      if (!foundToken) {
+        //RT has been stolen, requiring the stolen RT to be removed from DB
+        console.log("attempted fresh token reuse at login!");
+        newRTArray = [];
+      }
       res.clearCookie("jwt", { httpOnly: true, sameSite: "none" });
     }
     foundUser.refreshToken = [...newRTArray, newRefreshToken];
@@ -52,6 +63,7 @@ const handleAuth = async (req, res) => {
       // secure: true,
       maxAge: 1 * 24 * 60 * 60 * 1000,
     });
+
     res.json({
       accessToken,
       roles,

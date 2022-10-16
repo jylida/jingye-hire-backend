@@ -10,6 +10,7 @@ const handleRefreshToken = async (req, res) => {
   res.clearCookie("jwt", { httpOnly: true, sameSite: "None" });
 
   const foundUser = await User.findOne({ refreshToken }).exec();
+  console.log(foundUser);
   if (!foundUser) {
     jwt.verify(
       refreshToken,
@@ -42,7 +43,7 @@ const handleRefreshToken = async (req, res) => {
       if (err || foundUser.username !== decoded.username) {
         return res.sendStatus(403);
       }
-      const roles = Object.values(foundUser.roles);
+      const roles = Object.values(foundUser.roles).filter((rl) => rl);
       const accessToken = jwt.sign(
         {
           UserInfo: {
@@ -65,7 +66,7 @@ const handleRefreshToken = async (req, res) => {
       foundUser.refreshToken = [...newRTArray, newRefreshToken];
       await foundUser.save();
       res.cookie("jwt", newRefreshToken, { httpOnly: true, sameSite: "none" });
-      res.json(accessToken);
+      res.json({ accessToken, roles });
     }
   );
 };
