@@ -8,10 +8,12 @@ const handleLogout = async (req, res) => {
   }
   const foundUser = await User.findOne({ refreshToken }).exec();
   if (!foundUser) {
-    res.cookie("jwt", { httpOnly: true, sameSite: "None" });
+    res.clearCookie("jwt", { httpOnly: true, sameSite: "None" });
     return res.sendStatus(204);
   }
-  foundUser.refreshToken = "";
+  foundUser.refreshToken = foundUser.refreshToken.filter(
+    (rt) => rt !== refreshToken
+  );
   const result = await foundUser.save();
   console.log(result);
 

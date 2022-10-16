@@ -4,6 +4,7 @@ const Users = require("../model/Users");
 const Applicant = require("../model/Applicant");
 
 const handleAuth = async (req, res) => {
+  const cookies = req.cookies;
   const { user, pwd } = req.body;
   if (!(user && pwd)) {
     return res
@@ -28,17 +29,24 @@ const handleAuth = async (req, res) => {
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "1m" }
     );
-    const refreshToken = jwt.sign(
+    const newRefreshToken = jwt.sign(
       {
         username: foundUser.username,
       },
       process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: "1d" }
     );
-    foundUser.refreshToken = refreshToken;
+
+    const newRTArray = !cookies?.jwt
+      ? (foundUser.refreshToken = foundUser.refreshToken)
+      : foundUser.refreshToken.filter((rt) => rt !== cookies.jwt);
+    if (cookies?.jwt) {
+      res.clearCookie("jwt", { httpOnly: true, sameSite: "none" });
+    }
+    foundUser.refreshToken = [...newRTArray, newRefreshToken];
     await foundUser.save();
 
-    res.cookie("jwt", refreshToken, {
+    res.cookie("jwt", newRefreshToken, {
       httpOnly: true,
       sameSite: "None",
       // secure: true,
