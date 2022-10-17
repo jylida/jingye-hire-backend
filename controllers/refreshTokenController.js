@@ -7,7 +7,11 @@ const handleRefreshToken = async (req, res) => {
     return res.sendStatus(401);
   }
   const refreshToken = cookies.jwt;
-  res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
+  res.clearCookie("jwt", {
+    httpOnly: true,
+    sameSite: "None",
+    secure: true,
+  });
 
   const foundUser = await User.findOne({ refreshToken }).exec();
   console.log(foundUser);

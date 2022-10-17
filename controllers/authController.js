@@ -52,7 +52,11 @@ const handleAuth = async (req, res) => {
         console.log("attempted fresh token reuse at login!");
         newRTArray = [];
       }
-      res.clearCookie("jwt", { httpOnly: true, sameSite: "none" });
+      res.clearCookie("jwt", {
+        httpOnly: true,
+        sameSite: "none",
+        secure: true,
+      });
     }
     foundUser.refreshToken = [...newRTArray, newRefreshToken];
     await foundUser.save();
