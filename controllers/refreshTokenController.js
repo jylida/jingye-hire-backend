@@ -7,7 +7,7 @@ const handleRefreshToken = async (req, res) => {
     return res.sendStatus(401);
   }
   const refreshToken = cookies.jwt;
-  res.clearCookie("jwt", { httpOnly: true, sameSite: "None" });
+  res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
 
   const foundUser = await User.findOne({ refreshToken }).exec();
   console.log(foundUser);
@@ -65,7 +65,11 @@ const handleRefreshToken = async (req, res) => {
       );
       foundUser.refreshToken = [...newRTArray, newRefreshToken];
       await foundUser.save();
-      res.cookie("jwt", newRefreshToken, { httpOnly: true, sameSite: "none" });
+      res.cookie("jwt", newRefreshToken, {
+        httpOnly: true,
+        sameSite: "none",
+        secure: true,
+      });
       res.json({ accessToken, roles });
     }
   );

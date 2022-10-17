@@ -60,7 +60,7 @@ const handleAuth = async (req, res) => {
     res.cookie("jwt", newRefreshToken, {
       httpOnly: true,
       sameSite: "None",
-      // secure: true,
+      secure: true,
       maxAge: 1 * 24 * 60 * 60 * 1000,
     });
 
