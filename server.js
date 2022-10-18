@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const cookieParser = require("cookie-parser");
+const session = require("express-session");
 
 const { logger } = require("./middleware/logEvent");
 const verifyJWT = require("./middleware/verifyJWT");
@@ -25,10 +26,19 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 //middleware for cookies
 app.use(cookieParser());
+app.use(
+  session({
+    secret: "keyboard cat",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false },
+  })
+);
 app.use(credentials);
 
 app.use("/", express.static(path.join(__dirname, "public")));
-
+// app.use("/captcha", require("./routes/captcha"));
+app.use("/captcha", require("./routes/captcha"));
 app.use("/", require("./routes/root"));
 app.use("/register", require("./routes/register"));
 app.use("/auth", require("./routes/auth"));

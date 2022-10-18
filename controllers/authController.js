@@ -5,7 +5,10 @@ const Applicant = require("../model/Applicant");
 
 const handleAuth = async (req, res) => {
   const cookies = req.cookies;
-  const { user, pwd } = req.body;
+  const { user, pwd, captchaMatch } = req.body;
+  if (!captchaMatch) {
+    return res.status(400).json({ message: "Captcha does not match!" });
+  }
   if (!(user && pwd)) {
     return res
       .status(400)
