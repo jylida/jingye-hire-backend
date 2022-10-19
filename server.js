@@ -5,6 +5,7 @@ const https = require("https");
 const cors = require("cors");
 const path = require("path");
 const cookieParser = require("cookie-parser");
+const fs = require("fs");
 
 const { logger } = require("./middleware/logEvent");
 const verifyJWT = require("./middleware/verifyJWT");
@@ -53,8 +54,10 @@ app.all("*", (req, res) => {
 });
 const server = https.createServer(
   {
-    key: "/etc/nginx/sites-available/jingyeschool.org.cn.key",
-    cert: "/etc/nginx/sites-available/jingyeschool.org.cn_bundle.crt",
+    key: fs.readFileSync("/etc/nginx/sites-available/jingyeschool.org.cn.key"),
+    cert: fs.readFileSync(
+      "/etc/nginx/sites-available/jingyeschool.org.cn_bundle.crt"
+    ),
   },
   app
 );
