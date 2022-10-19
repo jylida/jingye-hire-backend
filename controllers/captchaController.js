@@ -1,9 +1,6 @@
 const { CaptchaGenerator } = require("captcha-canvas");
-const fs = require("fs");
-const path = require("path");
 
-const pngPath = path.join(__dirname, "..", "files", "captcha.png");
-const tokenPath = path.join(__dirname, "..", "files", "captchaToken.txt");
+let captchaToken = undefined;
 
 const generateCaptchaText = ({ length = 7, isCaseSensitive = true }) => {
   const allChr =
@@ -12,57 +9,42 @@ const generateCaptchaText = ({ length = 7, isCaseSensitive = true }) => {
   const indexArray = Array.from({ length: length }, () =>
     Math.floor(Math.random() * charArray.length)
   );
-  return indexArray.map((index) =>
-    index === charArray.length ? charArray[index - 1] : charArray[index]
-  );
+  return indexArray
+    .map((index) =>
+      index === charArray.length ? charArray[index - 1] : charArray[index]
+    )
+    .join("");
 };
 const generateCaptchaImage = () => {
-  const captchaText = generateCaptchaText({ isCaseSensitive: false });
+  captchaToken = generateCaptchaText({ isCaseSensitive: false });
   const captcha = new CaptchaGenerator()
     .setDimension(50, 200)
     .setCaptcha({
-      text: captchaText,
+      text: captchaToken,
       size: 30,
       color: "blueviolet",
     })
     .setDecoy({ opacity: 0.5 })
     .setTrace({ color: "blueviolet" });
   const buffer = captcha.generateSync();
-
-  if (!fs.existsSync(path.join(__dirname, "..", "files"))) {
-    console.log("directory ~/files does not exist!");
-    fs.mkdirSync(path.join(__dirname, "..", "files"));
-    console.log("directory ~/files has been created!");
-  }
-  fs.writeFileSync(pngPath, buffer);
-  fs.writeFileSync(tokenPath, captchaText.join(""));
-  return { captcha, captchaText };
-};
-
-const pngToBase64 = (filePath) => {
-  const bitmap = fs.readFileSync(filePath);
-  return new Buffer(bitmap).toString("base64");
+  const imageString = buffer.toString("base64");
+  return { imageString };
 };
 
 const createCaptcha = (req, res) => {
-  const { captchaText } = generateCaptchaImage();
-  const imageString = pngToBase64(pngPath);
-  res.status(200).json({ captchaText: captchaText.join(""), imageString });
+  const { imageString } = generateCaptchaImage();
+  res.status(200).json({ captchaText: captchaToken, imageString });
 };
 
 const verifyCaptcha = (req, res) => {
   const input = req.body.text;
-  console.log(input);
-  try {
-    fs.readFile(tokenPath, "utf-8", (err, data) => {
-      console.log(data);
-      return input === data
-        ? res.status(200).json({ status: "success", match: true })
-        : res.status(401).json({ status: "failure", match: false });
-    });
-  } catch (err) {
-    return res.status(500).json({ status: "failure", message: err.message });
+  console.log(input, captchaToken);
+  if (input !== captchaToken) {
+    return res
+      .status(403)
+      .json({ status: "failure", message: "captcha validation fails!" });
   }
+  res.status(200).json({ status: "success" });
 };
 
 module.exports = { createCaptcha, verifyCaptcha };

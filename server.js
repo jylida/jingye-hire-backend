@@ -29,7 +29,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(credentials);
 
-app.use("/", express.static(path.join(__dirname, "public")));
+// app.use("/", express.static(path.join(__dirname, "public")));
 app.use("/", require("./routes/root"));
 app.use("/api1/captcha", require("./routes/captcha"));
 app.use("/api1/register", require("./routes/register"));
@@ -43,26 +43,19 @@ app.use("/api1/upload", require("./routes/api/upload"));
 app.use("/api1/download", require("./routes/api/download"));
 
 app.all("*", (req, res) => {
-  res.status(404);
-  if (req.accepts("html")) {
-    res.sendFile(__dirname, "views", "404.html");
-  } else if (req.accepts("json")) {
-    res.json({ error: "404 not Found!" });
-  } else {
-    res.type("txt").send("404 not found!");
-  }
+  res.status(404).send("404 not found!");
 });
-const server = https.createServer(
-  {
-    key: fs.readFileSync("/etc/nginx/sites-available/jingyeschool.org.cn.key"),
-    cert: fs.readFileSync(
-      "/etc/nginx/sites-available/jingyeschool.org.cn_bundle.crt"
-    ),
-  },
-  app
-);
+// const server = https.createServer(
+//   {
+//     key: fs.readFileSync("/etc/nginx/sites-available/jingyeschool.org.cn.key"),
+//     cert: fs.readFileSync(
+//       "/etc/nginx/sites-available/jingyeschool.org.cn_bundle.crt"
+//     ),
+//   },
+//   app
+// );
 
 mongoose.connection.once("open", () => {
   console.log("Connected MongoDB");
-  server.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
+  app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
 });
