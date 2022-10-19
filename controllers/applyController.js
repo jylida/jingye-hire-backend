@@ -8,12 +8,28 @@ const handleApply = async (req, res) => {
         "basic information, education background, and work experience are all required!",
     });
   }
-  const duplicate = await Applicant.findOne({
+  const duplicateByUserName = await Applicant.findOne({
     username: basic.username,
   }).exec();
-  if (duplicate) {
+  const duplicateByPhone = await Applicant.findOne({
+    phone: parseInt(basic.phone),
+  }).exec();
+  const duplicateByID = await Applicant.findOne({
+    IDCard: basic.IDCard,
+  }).exec();
+  if (duplicateByUserName) {
     return res.status(409).json({
       message: `User ${basic.username} has already lodged a application!`,
+    });
+  }
+  if (duplicateByPhone) {
+    return res.status(409).json({
+      message: `手机号: ${duplicateByPhone.phone} 已经被用于注册`,
+    });
+  }
+  if (duplicateByID) {
+    return res.status(409).json({
+      message: `身份证号 ${duplicateByID.IDCard} 已经被用于注册`,
     });
   }
   const newApplication = {

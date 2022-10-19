@@ -1,5 +1,6 @@
 const { CaptchaGenerator } = require("captcha-canvas");
 const fs = require("fs");
+const fsPromise = fs.promises;
 const path = require("path");
 
 const pngPath = path.join(__dirname, "..", "files", "captcha.png");
@@ -28,6 +29,12 @@ const generateCaptchaImage = () => {
     .setDecoy({ opacity: 0.5 })
     .setTrace({ color: "blueviolet" });
   const buffer = captcha.generateSync();
+
+  if (!fs.existsSync(path.join(__dirname, "..", "files"))) {
+    console.log("directory ~/files does not exist!");
+    fs.mkdirSync(path.join(__dirname, "..", "files"));
+    console.log("directory ~/files has been created!");
+  }
   fs.writeFileSync(pngPath, buffer);
   fs.writeFileSync(tokenPath, captchaText.join(""));
   return captcha;
