@@ -1,10 +1,10 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 const express = require("express");
+const https = require("https");
 const cors = require("cors");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const session = require("express-session");
 
 const { logger } = require("./middleware/logEvent");
 const verifyJWT = require("./middleware/verifyJWT");
@@ -26,14 +26,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 //middleware for cookies
 app.use(cookieParser());
-app.use(
-  session({
-    secret: "keyboard cat",
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false },
-  })
-);
 app.use(credentials);
 
 app.use("/", express.static(path.join(__dirname, "public")));
@@ -59,8 +51,15 @@ app.all("*", (req, res) => {
     res.type("txt").send("404 not found!");
   }
 });
+const server = https.createServer(
+  {
+    key: "/etc/nginx/sites-available/jingyeschool.org.cn.key",
+    cert: "/etc/nginx/sites-available/jingyeschool.org.cn_bundle.crt",
+  },
+  app
+);
 
 mongoose.connection.once("open", () => {
   console.log("Connected MongoDB");
-  app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
+  server.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
 });
