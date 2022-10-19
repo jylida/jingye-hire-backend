@@ -1,6 +1,5 @@
 const { CaptchaGenerator } = require("captcha-canvas");
 const fs = require("fs");
-const fsPromise = fs.promises;
 const path = require("path");
 
 const pngPath = path.join(__dirname, "..", "files", "captcha.png");
@@ -37,19 +36,18 @@ const generateCaptchaImage = () => {
   }
   fs.writeFileSync(pngPath, buffer);
   fs.writeFileSync(tokenPath, captchaText.join(""));
-  return {captcha, captchaText};
+  return { captcha, captchaText };
+};
+
+const pngToBase64 = (filePath) => {
+  const bitmap = fs.readFileSync(filePath);
+  return new Buffer(bitmap).toString("base64");
 };
 
 const createCaptcha = (req, res) => {
-  const {captchaText} = generateCaptchaImage();
-  const s = fs.createReadStream(pngPath);
-  s.on("open", () => {
-    res.set("Content-Type", "image/png");
-    s.pipe(res);
-  });
-  s.on("error", (err) => {
-    return res.status(500).json({ status: "failure", message: err.message });
-  });
+  const { captchaText } = generateCaptchaImage();
+  const imageString = pngToBase64(pngPath);
+  res.status(200).json({ captchaText: captchaText.join(""), imageString });
 };
 
 const verifyCaptcha = (req, res) => {
