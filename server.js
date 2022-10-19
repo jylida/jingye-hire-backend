@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const express = require("express");
 const https = require("https");
 const cors = require("cors");
-const path = require("path");
 const cookieParser = require("cookie-parser");
 const fs = require("fs");
 
@@ -45,17 +44,17 @@ app.use("/api1/download", require("./routes/api/download"));
 app.all("*", (req, res) => {
   res.status(404).send("404 not found!");
 });
-// const server = https.createServer(
-//   {
-//     key: fs.readFileSync("/etc/nginx/sites-available/jingyeschool.org.cn.key"),
-//     cert: fs.readFileSync(
-//       "/etc/nginx/sites-available/jingyeschool.org.cn_bundle.crt"
-//     ),
-//   },
-//   app
-// );
+const server = https.createServer(
+  {
+    key: fs.readFileSync("/etc/nginx/sites-available/jingyeschool.org.cn.key"),
+    cert: fs.readFileSync(
+      "/etc/nginx/sites-available/jingyeschool.org.cn_bundle.crt"
+    ),
+  },
+  app
+);
 
 mongoose.connection.once("open", () => {
   console.log("Connected MongoDB");
-  app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
+  server.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
 });
