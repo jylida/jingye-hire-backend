@@ -37,11 +37,11 @@ const generateCaptchaImage = () => {
   }
   fs.writeFileSync(pngPath, buffer);
   fs.writeFileSync(tokenPath, captchaText.join(""));
-  return captcha;
+  return {captcha, captchaText};
 };
 
 const createCaptcha = (req, res) => {
-  generateCaptchaImage();
+  const {captchaText} = generateCaptchaImage();
   const s = fs.createReadStream(pngPath);
   s.on("open", () => {
     res.set("Content-Type", "image/png");

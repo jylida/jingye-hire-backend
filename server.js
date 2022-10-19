@@ -37,18 +37,17 @@ app.use(
 app.use(credentials);
 
 app.use("/", express.static(path.join(__dirname, "public")));
-// app.use("/captcha", require("./routes/captcha"));
-app.use("/captcha", require("./routes/captcha"));
 app.use("/", require("./routes/root"));
-app.use("/register", require("./routes/register"));
-app.use("/auth", require("./routes/auth"));
-app.use("/refresh", require("./routes/refresh"));
-app.use("/logout", require("./routes/logout"));
-app.use("/hirenews", require("./routes/api/hireNews"));
+app.use("/api1/captcha", require("./routes/captcha"));
+app.use("/api1/register", require("./routes/register"));
+app.use("/api1/auth", require("./routes/auth"));
+app.use("/api1/refresh", require("./routes/refresh"));
+app.use("/api1/logout", require("./routes/logout"));
+app.use("/api1/hirenews", require("./routes/api/hireNews"));
 app.use(verifyJWT);
-app.use("/apply", require("./routes/api/apply"));
-app.use("/upload", require("./routes/api/upload"));
-app.use("/download", require("./routes/api/download"));
+app.use("/api1/apply", require("./routes/api/apply"));
+app.use("/api1/upload", require("./routes/api/upload"));
+app.use("/api1/download", require("./routes/api/download"));
 
 app.all("*", (req, res) => {
   res.status(404);
