@@ -15,7 +15,7 @@ const generateCaptchaText = ({ length = 7, isCaseSensitive = true }) => {
     )
     .join("");
 };
-const generateCaptchaImage = () => {
+const generateCaptchaImage = async () => {
   captchaToken = generateCaptchaText({ isCaseSensitive: false });
   const captcha = new CaptchaGenerator()
     .setDimension(50, 200)
@@ -26,14 +26,15 @@ const generateCaptchaImage = () => {
     })
     .setDecoy({ opacity: 0.5 })
     .setTrace({ color: "blueviolet" });
-  const buffer = captcha.generateSync();
+  const buffer = await captcha.generate();
   const imageString = buffer.toString("base64");
   return { imageString };
 };
 
 const createCaptcha = (req, res) => {
-  const { imageString } = generateCaptchaImage();
-  res.status(200).json({ captchaText: captchaToken, imageString });
+  generateCaptchaImage().then(({ imageString }) => {
+    return res.status(200).json({ imageString });
+  });
 };
 
 const verifyCaptcha = (req, res) => {
