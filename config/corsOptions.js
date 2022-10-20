@@ -8,6 +8,7 @@ const corsOptions = {
       callback(new Error("Not allowed by CORS"));
     }
   },
+  // origin: "*",
   allowedHeaders: "Content-Type, Authorization",
   credentials: true,
   optionsSuccessStatus: 200,
