@@ -4,7 +4,7 @@ let captchaToken = undefined;
 
 const generateCaptchaText = ({ length = 7, isCaseSensitive = true }) => {
   const allChr =
-    "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890";
+    "AaBbCcDdEeFfGgHhiJjKkLMmNnPpQqRrSsTtUuVvWwXxYyZz111112222233333444445555566666777778888899999";
   const charArray = (isCaseSensitive ? allChr : allChr.toLowerCase()).split("");
   const indexArray = Array.from({ length: length }, () =>
     Math.floor(Math.random() * charArray.length)
@@ -18,7 +18,7 @@ const generateCaptchaText = ({ length = 7, isCaseSensitive = true }) => {
 const generateCaptchaImage = async () => {
   captchaToken = generateCaptchaText({ isCaseSensitive: false });
   const captcha = new CaptchaGenerator()
-    .setDimension(50, 200)
+    .setDimension(50, 150)
     .setCaptcha({
       text: captchaToken,
       size: 30,
